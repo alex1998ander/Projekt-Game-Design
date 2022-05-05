@@ -5,15 +5,15 @@ using UnityEngine;
 public class TerrainGenerator : MonoBehaviour {
 
     private GameObject[] Chunks { get; set; }
-    public static int CHUNK_SIZE = 10;
-    public static int X_CHUNCK_COUNT = 10;
-    public static int Z_CHUNCK_COUNT = 25;
-    public static int VERTEX_DISTANCE = 5;
+    public static int CHUNK_SIZE = 32;
+    public static int X_CHUNCK_COUNT = 1;
+    public static int Z_CHUNCK_COUNT = 1;
+    public static int VERTEX_DISTANCE = 1;
     private Seed seed;
 
     [SerializeField] private GameObject chunkPrefab;
     [SerializeField] private string seedStr = "";
-    [SerializeField] private INoiseFunction noiseFunction = new SkiSlopeNoise();
+    [SerializeField] private INoiseFunction noiseFunction = new PlaneNoise();
 
     public void Awake() {
 
