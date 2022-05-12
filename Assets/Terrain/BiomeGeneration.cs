@@ -5,61 +5,65 @@ using UnityEngine;
 
 public class BiomeGeneration : MonoBehaviour {
 
-    int[,] BiomeMap = new int[,] { { 0, 0, 1 }, { 2, 3, 4 }, { 5, 2, 6 } };
+    
+    [SerializeField] private List<BiomeSO> Biomes = new();
 
-    public void Start() {
-        StartCoroutine(InitializeBiomeMap());
+    public static BiomeGeneration Instance;
+
+
+    private static int[,] BiomeMap = new int[3,3];
+
+    private static int BiomeMapOffset = 0;
+
+    public void Awake() {
+        Instance = this;
     }
 
-    public IEnumerator InitializeBiomeMap() {
+    public void InitializeBiomeMap() {
 
-        //for (int y = 0; y < BiomeMap.GetLength(0); y++) {
-        //    for (int x = 0; x < BiomeMap.GetLength(0); x++) {
 
-        //        BiomeMap[y, x] = Random.Range(0, 7);
-        //    }
-        //}
+        for (int y = 0; y < BiomeMap.GetLength(0); y++) {
+            for (int x = 0; x < BiomeMap.GetLength(1); x++) {
+
+                BiomeMap[y, x] = Random.Range(0, Biomes.Count);
+                Debug.Log(BiomeMap[y, x]);
+            }
+        }
 
         DrawDensityMap();
-        yield return new WaitForSeconds(1);
         ZoomInBiomeMap();
-        DrawDensityMap();
-        yield return new WaitForSeconds(1);
         ZoomInBiomeMap();
-        DrawDensityMap();
-        yield return new WaitForSeconds(1);
         ZoomInBiomeMap();
-        DrawDensityMap();
-        yield return new WaitForSeconds(1);
         ZoomInBiomeMap();
-        DrawDensityMap();
-        yield return new WaitForSeconds(1);
         ZoomInBiomeMap();
-        DrawDensityMap();
-        yield return new WaitForSeconds(1);
         SmoothBiomeMap();
-        DrawDensityMap();
-        yield return new WaitForSeconds(1);
         SmoothBiomeMap();
-        DrawDensityMap();
-        yield return new WaitForSeconds(1);
+        SmoothBiomeMap();
         SmoothBiomeMap();
         DrawDensityMap();
     }
 
-    public void DrawDensityMap() {
+    public static BiomeSO GetBiome(Vector2Int pos) {
 
-        Color32[] colors = new Color32[BiomeMap.GetLength(0) * BiomeMap.GetLength(0)];
+        int biomeId = BiomeMap[pos.y, pos.x];
+
+        return Instance.Biomes[biomeId];
+
+    }
+
+    private void DrawDensityMap() {
+
+        Color32[] colors = new Color32[BiomeMap.GetLength(0) * BiomeMap.GetLength(1)];
 
         for (int i = 0, y = 0; y < BiomeMap.GetLength(0); y++) {
-            for (int x = 0; x < BiomeMap.GetLength(0); x++) {
+            for (int x = 0; x < BiomeMap.GetLength(1); x++) {
 
                 colors[i++] = GetColor(BiomeMap[y, x]);
 
             }
         }
 
-        Texture2D texture = new(BiomeMap.GetLength(0), BiomeMap.GetLength(0));
+        Texture2D texture = new(BiomeMap.GetLength(1), BiomeMap.GetLength(0));
         texture.SetPixels32(colors);
         texture.filterMode = FilterMode.Point;
         texture.Apply();
@@ -67,32 +71,27 @@ public class BiomeGeneration : MonoBehaviour {
         Renderer r = GetComponent<Renderer>();
         r.material.mainTexture = texture;
 
-
     }
 
     private Color GetColor(int value) {
 
         switch (value) {
-            case 0: return Color.blue;
-            case 1: return Color.yellow;
-            case 2: return Color.green;
-            case 3: return Color.white;
-            case 4: return Color.black;
-            case 5: return Color.red;
-            case 6: return Color.cyan;
+            case 0: return Color.green;
+            case 1: return Color.cyan;
+            case 2: return Color.white;
+            case 3: return Color.red;
+
             default: return Color.gray;
         }
 
     }
 
-    private void ZoomInBiomeMap() {
+    private static void ZoomInBiomeMap() {
 
-        int size = BiomeMap.GetLength(0) * 2 - 1;
-
-        int[,] zoomedBiomeMap = new int[size, size];
+        int[,] zoomedBiomeMap = new int[BiomeMap.GetLength(0) * 2 - 1, BiomeMap.GetLength(1) * 2 - 1];
 
         for (int y = 0; y < BiomeMap.GetLength(0) - 1; y++) {
-            for (int x = 0; x < BiomeMap.GetLength(0) - 1; x++) {
+            for (int x = 0; x < BiomeMap.GetLength(1) - 1; x++) {
 
                 zoomedBiomeMap[y * 2, x * 2] = BiomeMap[y, x];
                 zoomedBiomeMap[y * 2 + 1, x * 2] = ChooseRandom(BiomeMap[y, x], BiomeMap[y + 1, x]);
@@ -108,7 +107,7 @@ public class BiomeGeneration : MonoBehaviour {
 
             }
 
-            int _x = BiomeMap.GetLength(0) - 1;
+            int _x = BiomeMap.GetLength(1) - 1;
 
             zoomedBiomeMap[y * 2, _x * 2] = BiomeMap[y, _x];
             zoomedBiomeMap[y * 2 + 1, _x * 2] = ChooseRandom(BiomeMap[y, _x], BiomeMap[y + 1, _x]);
@@ -117,26 +116,24 @@ public class BiomeGeneration : MonoBehaviour {
 
         int _y = BiomeMap.GetLength(0) - 1;
 
-        for (int x = 0; x < BiomeMap.GetLength(0) - 1; x++) {
+        for (int x = 0; x < BiomeMap.GetLength(1) - 1; x++) {
 
             zoomedBiomeMap[_y * 2, x * 2] = BiomeMap[_y, x];
             zoomedBiomeMap[_y * 2, x * 2 + 1] = ChooseRandom(BiomeMap[_y, x], BiomeMap[_y, x + 1]);
         }
 
-        zoomedBiomeMap[_y * 2, _y * 2] = BiomeMap[_y, _y];
+        zoomedBiomeMap[_y * 2, BiomeMap.GetLength(1) - 1] = BiomeMap[_y, BiomeMap.GetLength(1) - 1];
 
         BiomeMap = zoomedBiomeMap;
 
     }
 
-    private void SmoothBiomeMap() {
+    private static void SmoothBiomeMap() {
 
-        int size = BiomeMap.GetLength(0) - 2;
+        int[,] smoothedBiomeMap = new int[BiomeMap.GetLength(0) - 2, BiomeMap.GetLength(1) - 2];
 
-        int[,] smoothedBiomeMap = new int[size, size];
-
-        for (int y = 1; y <= size; y++) {
-            for (int x = 1; x <= size; x++) {
+        for (int y = 1; y <= BiomeMap.GetLength(0) - 2; y++) {
+            for (int x = 1; x <= BiomeMap.GetLength(1) - 2; x++) {
 
                 int above = BiomeMap[y - 1, x], below = BiomeMap[y + 1, x], left = BiomeMap[y, x - 1], right = BiomeMap[y, x + 1];
 
@@ -157,7 +154,7 @@ public class BiomeGeneration : MonoBehaviour {
         BiomeMap = smoothedBiomeMap;
     }
 
-    private int ChooseRandom(params int[] choices) {
+    private static int ChooseRandom(params int[] choices) {
 
         int[] distinctChoises = choices.Distinct().ToArray();
 
@@ -165,12 +162,12 @@ public class BiomeGeneration : MonoBehaviour {
 
     }
 
-    private string BiomeMapToString() {
+    private static string BiomeMapToString() {
 
         string result = "";
 
         for (int y = 0; y < BiomeMap.GetLength(0); y++) {
-            for (int x = 0; x < BiomeMap.GetLength(0); x++) {
+            for (int x = 0; x < BiomeMap.GetLength(1); x++) {
 
                 result += BiomeMap[y, x];
                 result += " ";

@@ -5,17 +5,19 @@ using UnityEngine;
 public class TerrainGenerator : MonoBehaviour {
 
     private GameObject[] Chunks { get; set; }
-    public static int CHUNK_SIZE = 32;
-    public static int X_CHUNCK_COUNT = 1;
-    public static int Z_CHUNCK_COUNT = 1;
+    public static int CHUNK_SIZE = 10;
+    public static int X_CHUNCK_COUNT = 57;
+    public static int Z_CHUNCK_COUNT = 57;
     public static int VERTEX_DISTANCE = 1;
     private Seed seed;
 
     [SerializeField] private GameObject chunkPrefab;
     [SerializeField] private string seedStr = "";
-    [SerializeField] private INoiseFunction noiseFunction = new PlaneNoise();
+    [SerializeField] private INoiseFunction noiseFunction = new SkiSlopeNoise();
 
     public void Awake() {
+
+        BiomeGeneration.Instance.InitializeBiomeMap();
 
         seed = new Seed(seedStr);
         Chunks = new GameObject[X_CHUNCK_COUNT * Z_CHUNCK_COUNT];
@@ -61,7 +63,14 @@ public class TerrainGenerator : MonoBehaviour {
                 vert++;
             }
 
-            GameObject newChunk = Instantiate(chunkPrefab, new Vector3((chunkIdx % X_CHUNCK_COUNT) * CHUNK_SIZE * VERTEX_DISTANCE, 0, (chunkIdx / X_CHUNCK_COUNT) * CHUNK_SIZE * VERTEX_DISTANCE), Quaternion.identity);
+            Vector3 chunkPos = new Vector3((chunkIdx % X_CHUNCK_COUNT) * CHUNK_SIZE * VERTEX_DISTANCE, 0, (chunkIdx / X_CHUNCK_COUNT) * CHUNK_SIZE * VERTEX_DISTANCE);
+
+            GameObject newChunk = Instantiate(chunkPrefab, chunkPos, Quaternion.identity);
+
+            Chunk chunkData = newChunk.GetComponent<Chunk>();
+            chunkData.Biome = BiomeGeneration.GetBiome(new Vector2Int(chunkIdx % X_CHUNCK_COUNT, (int) chunkIdx / X_CHUNCK_COUNT));
+
+            newChunk.GetComponent<Renderer>().material = chunkData.Biome.DebugMaterial;
 
             newChunk.transform.parent = transform;
             newChunk.name = "Chunk " + chunkIdx;

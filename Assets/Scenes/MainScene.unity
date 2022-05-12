@@ -155,6 +155,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea2da64707970a04cbf745ecb020b7d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Biomes:
+  - {fileID: 11400000, guid: afd9f9ea1e829594395fe810c78c11bd, type: 2}
+  - {fileID: 11400000, guid: 8693f2042eef18f48a6997daab3135c7, type: 2}
+  - {fileID: 11400000, guid: 3115d44ab8a88f44ca03a6b5ea651dac, type: 2}
+  - {fileID: 11400000, guid: b3d5897cbe293de41912f4b9bbd4b2a8, type: 2}
 --- !u!64 &19793137
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -264,7 +269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkPrefab: {fileID: 1230861678402292941, guid: 811f3a8da15005f41a6af0dea319124e, type: 3}
-  seedStr: 
+  seedStr: seed
 --- !u!4 &49100514
 Transform:
   m_ObjectHideFlags: 0
@@ -450,11 +455,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 20, z: 0}
+  m_LocalRotation: {x: -0.3913778, y: 0.30211097, z: -0.13764836, w: -0.8582572}
+  m_LocalPosition: {x: 533.25806, y: 434.35492, z: -84.74509}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
