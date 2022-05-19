@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Trunk
+  - Forest
+  - Slope
+  - Village
+  - FrozenLake
   layers:
   - Default
   - TransparentFX
@@ -25,7 +30,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Obstacles
   - 
   - 
   - 

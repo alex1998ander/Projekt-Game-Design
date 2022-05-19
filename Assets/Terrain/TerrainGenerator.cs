@@ -2,34 +2,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TerrainGenerator : MonoBehaviour {
+public class TerrainGenerator : MonoBehaviour
+{
 
     private GameObject[] Chunks { get; set; }
     public static int CHUNK_SIZE = 10;
     public static int X_CHUNCK_COUNT = 57;
     public static int Z_CHUNCK_COUNT = 57;
     public static int VERTEX_DISTANCE = 1;
+    public static int MAX_TREE_COUNT_PER_CHUNK = 5;
     private Seed seed;
+    public int treeIdx = 0;
+    TreeGeneration t;
+    //Vector3[] verticies = new Vector3[(CHUNK_SIZE + 1) * (CHUNK_SIZE + 1)];
 
     [SerializeField] private GameObject chunkPrefab;
     [SerializeField] private string seedStr = "";
     [SerializeField] private INoiseFunction noiseFunction = new SkiSlopeNoise();
 
-    public void Awake() {
+    public void Awake()
+    {
 
         BiomeGeneration.Instance.InitializeBiomeMap();
+        t = GameObject.Find("Trees").GetComponent<TreeGeneration>();
 
         seed = new Seed(seedStr);
         Chunks = new GameObject[X_CHUNCK_COUNT * Z_CHUNCK_COUNT];
 
         //Für jeden Chunk
-        for (int chunkIdx = 0; chunkIdx < Chunks.Length; chunkIdx++) {
+        for (int chunkIdx = 0; chunkIdx < Chunks.Length; chunkIdx++)
+        {
 
             //Positionen der Mesh-Knotenpunkte
             Vector3[] verticies = new Vector3[(CHUNK_SIZE + 1) * (CHUNK_SIZE + 1)];
 
-            for (int i = 0, z = 0; z <= CHUNK_SIZE; z++) {
-                for (int x = 0; x <= CHUNK_SIZE; x++) {
+            for (int i = 0, z = 0; z <= CHUNK_SIZE; z++)
+            {
+                for (int x = 0; x <= CHUNK_SIZE; x++)
+                {
 
                     int xGlobal = (chunkIdx % X_CHUNCK_COUNT) * CHUNK_SIZE + x;
                     int zGlobal = (chunkIdx / X_CHUNCK_COUNT) * CHUNK_SIZE + z;
@@ -46,8 +56,10 @@ public class TerrainGenerator : MonoBehaviour {
             int current = 0;
 
             //Berechnung der Punkte der Dreicke (6 Punkte: 3 Punkte pro Dreieck, 2 Dreiecke pro Kachel)
-            for (int z = 0; z < CHUNK_SIZE; z++) {
-                for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int z = 0; z < CHUNK_SIZE; z++)
+            {
+                for (int x = 0; x < CHUNK_SIZE; x++)
+                {
 
                     triangles[current] = vert;
                     triangles[current + 1] = vert + CHUNK_SIZE + 1;
@@ -68,7 +80,7 @@ public class TerrainGenerator : MonoBehaviour {
             GameObject newChunk = Instantiate(chunkPrefab, chunkPos, Quaternion.identity);
 
             Chunk chunkData = newChunk.GetComponent<Chunk>();
-            chunkData.Biome = BiomeGeneration.GetBiome(new Vector2Int(chunkIdx % X_CHUNCK_COUNT, (int) chunkIdx / X_CHUNCK_COUNT));
+            chunkData.Biome = BiomeGeneration.GetBiome(new Vector2Int(chunkIdx % X_CHUNCK_COUNT, (int)chunkIdx / X_CHUNCK_COUNT));
 
             newChunk.GetComponent<Renderer>().material = chunkData.Biome.DebugMaterial;
 
@@ -84,11 +96,61 @@ public class TerrainGenerator : MonoBehaviour {
             mesh.triangles = triangles;
             mesh.RecalculateBounds();
 
+            TreesGen(chunkPos, verticies, chunkData.Biome);
+
             MeshCollider meshCollider = newChunk.GetComponent<MeshCollider>();
             meshCollider.sharedMesh = mesh;
 
-
             Chunks[chunkIdx] = newChunk;
+        }
+    }
+
+    private void TreesGen(Vector3 chunkPos, Vector3[] verticies, BiomeSO biome)
+    {
+        int count = Random.Range(1, MAX_TREE_COUNT_PER_CHUNK);
+        GameObject trees = GameObject.Find("Trees");
+        int treeNumber = 0;
+
+        //Debug.Log(biome.name);
+
+        if (biome.name == "Biome_Forest")
+        {
+            treeNumber = 1;
+        }
+        else if (biome.name == "Biome_Frozen_Lake")
+        {
+            treeNumber = 2;
+        }
+        else if (biome.name == "Biome_Slope")
+        {
+            treeNumber = 3;
+        }
+        else if (biome.name == "Biome_Village")
+        {
+            treeNumber = 4;
+        }
+        else
+        {
+            treeNumber = 0;
+        }
+
+        //treeNumber = 0;
+        //Debug.Log(treeNumber);
+        for (int i = 0; i < count; i++)
+        {
+            //int index = Random.Range(0, TreeGeneration.GetTreeCount());
+            int pos = Random.Range(0, verticies.Length);
+            GameObject tree = t.GetTree2(treeNumber);
+
+            Vector3 treePosition4 = new Vector3(chunkPos.x + verticies[pos].x, chunkPos.y + verticies[pos].y + 0.8f, chunkPos.z + verticies[pos].z);
+
+            tree.transform.position = treePosition4;
+            GameObject newTree = Instantiate(tree);
+
+            newTree.transform.SetParent(trees.transform);
+            newTree.name = "Tree " + treeIdx;
+            newTree.layer = LayerMask.NameToLayer("Obstacles");
+            treeIdx++;
         }
     }
 }
