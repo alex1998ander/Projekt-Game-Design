@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Biome_Slope
   m_EditorClassIdentifier: 
   Name: Slope
+  Weight: 20
   DebugMaterial: {fileID: 2100000, guid: dd29659d0f894e74c944c63c9f84ab05, type: 2}

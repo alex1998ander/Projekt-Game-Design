@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Biome_Forest
   m_EditorClassIdentifier: 
   Name: Forest
+  Weight: 10
   DebugMaterial: {fileID: 2100000, guid: 58128363c8a3e2d4d90cf5acf30067f5, type: 2}

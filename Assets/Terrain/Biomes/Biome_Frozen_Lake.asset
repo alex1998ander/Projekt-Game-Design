@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Biome_Frozen_Lake
   m_EditorClassIdentifier: 
   Name: Frozen Lake
+  Weight: 4
   DebugMaterial: {fileID: 2100000, guid: f0623c16d63f617488a5eb3798d08af9, type: 2}

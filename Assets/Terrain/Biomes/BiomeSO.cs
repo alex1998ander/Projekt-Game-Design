@@ -8,6 +8,8 @@ public class BiomeSO : ScriptableObject
 
     public string Name;
 
+    public int Weight;
+
     public Material DebugMaterial;
 
 }

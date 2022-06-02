@@ -5,152 +5,270 @@ using UnityEngine;
 public class TerrainGenerator : MonoBehaviour
 {
 
+    #region Konstanten
+    //Vertexanzahl pro Chunkseite
+    private const int CHUNK_SIZE = 10;
+    //Chunkanzahl pro Seite
+    private static int X_CHUNCK_COUNT;
+    private static int Z_CHUNCK_COUNT;
+    //Chunkanzahl gesamt
+    private static int CHUNK_COUNT;
+
+    //Y-Grï¿½ï¿½e jeder neu generierten Terrainerweiterung
+    private static int NEW_AREA_LENGTH;
+
+    //Dreiecksanordnung der Verticies eines Meshes
+    private static int[] TRIANGLES_MESH;
+    private static int[] TRIANGLES_COLLIDER;
+
+    //Collidergrï¿½ï¿½e unterhalb des Spielers (MUSS UNGERADE sein, damit der Spieler in der Mitte bleibt)
+    private const int COLLIDER_CHUNK_SIZE = 5;
+    #endregion
+
+    #region Variablen
+    //Chunk-Array
     private GameObject[] Chunks { get; set; }
-    public static int CHUNK_SIZE = 10;
-    public static int X_CHUNCK_COUNT = 57;
-    public static int Z_CHUNCK_COUNT = 57;
-    public static int VERTEX_DISTANCE = 1;
-    public static int MAX_TREE_COUNT_PER_CHUNK = 5;
-    private Seed seed;
-    public int treeIdx = 0;
-    TreeGeneration t;
-    //Vector3[] verticies = new Vector3[(CHUNK_SIZE + 1) * (CHUNK_SIZE + 1)];
+    //Spielerposition
+    public Transform Player;
+    //Collider fï¿½r den Untergrund in der Umgebung des Spielers
+    public GameObject Collider;
 
+    //World-Koordinate des Terrainanfangs
+    private int terrainOffsetZ = 0;
+    //Startindex des Chunkarrays
+    //Die neugenerierten Chunks werden im Array an der Stelle ersetzt, an denen die alten zu entfernenden Chunks liegen.
+    //Nach dem Entfernen der alten Chunks, ist der neue "erste" Chunk an der Stelle 'chunkArrayStartIndex' im Array)
+    private int chunkArrayStartIndex = 0;
+    //Aktueller Index im Chunk-Array an dem sich der Spieler befindet
+    private int currentPlayerChunkIdx = -1;
+
+    //Singleton
+    public static TerrainGenerator Instance;
+
+    //ChunkPrefab
     [SerializeField] private GameObject chunkPrefab;
-    [SerializeField] private string seedStr = "";
+    //Noise-Funktion
     [SerializeField] private INoiseFunction noiseFunction = new SkiSlopeNoise();
+    #endregion
 
-    public void Awake()
-    {
+    public void Awake() {
+        Instance = this;
 
-        BiomeGeneration.Instance.InitializeBiomeMap();
-        t = GameObject.Find("Trees").GetComponent<TreeGeneration>();
+        BiomeGeneration.Init();
 
-        seed = new Seed(seedStr);
-        Chunks = new GameObject[X_CHUNCK_COUNT * Z_CHUNCK_COUNT];
+        X_CHUNCK_COUNT = BiomeGeneration.GetWorldWidth();
+        Z_CHUNCK_COUNT = BiomeGeneration.GetWorldLength();
 
-        //Für jeden Chunk
+        CHUNK_COUNT = X_CHUNCK_COUNT * Z_CHUNCK_COUNT;
+
+        //+4 durchs 3-fache Smoothing (+6 -2 fï¿½r generellen Offset von 2)
+        NEW_AREA_LENGTH = X_CHUNCK_COUNT - (X_CHUNCK_COUNT / 3) + 4;
+
+        TRIANGLES_MESH = CreateMeshTriangleArray(1);
+        TRIANGLES_COLLIDER = CreateMeshTriangleArray(COLLIDER_CHUNK_SIZE);
+
+
+        Chunks = new GameObject[CHUNK_COUNT];
+
+        //Fï¿½r jeden Chunk
         for (int chunkIdx = 0; chunkIdx < Chunks.Length; chunkIdx++)
         {
 
-            //Positionen der Mesh-Knotenpunkte
-            Vector3[] verticies = new Vector3[(CHUNK_SIZE + 1) * (CHUNK_SIZE + 1)];
+            Vector2Int chunkPos = new(chunkIdx % X_CHUNCK_COUNT, chunkIdx / X_CHUNCK_COUNT);
+            Vector3 chunkPosWorld = new(chunkPos.x * CHUNK_SIZE, 0, chunkPos.y * CHUNK_SIZE);
 
-            for (int i = 0, z = 0; z <= CHUNK_SIZE; z++)
-            {
-                for (int x = 0; x <= CHUNK_SIZE; x++)
-                {
+            GameObject newChunk = Instantiate(chunkPrefab, chunkPosWorld, Quaternion.identity);
 
-                    int xGlobal = (chunkIdx % X_CHUNCK_COUNT) * CHUNK_SIZE + x;
-                    int zGlobal = (chunkIdx / X_CHUNCK_COUNT) * CHUNK_SIZE + z;
-
-                    verticies[i] = new Vector3(x * VERTEX_DISTANCE, noiseFunction.Noise(xGlobal * VERTEX_DISTANCE, zGlobal * VERTEX_DISTANCE, seed), z * VERTEX_DISTANCE);
-                    i++;
-                }
-            }
-
-            //Berechnung der Dreiecke vom Mesh
-            int[] triangles = new int[CHUNK_SIZE * CHUNK_SIZE * 6];
-
-            int vert = 0;
-            int current = 0;
-
-            //Berechnung der Punkte der Dreicke (6 Punkte: 3 Punkte pro Dreieck, 2 Dreiecke pro Kachel)
-            for (int z = 0; z < CHUNK_SIZE; z++)
-            {
-                for (int x = 0; x < CHUNK_SIZE; x++)
-                {
-
-                    triangles[current] = vert;
-                    triangles[current + 1] = vert + CHUNK_SIZE + 1;
-                    triangles[current + 2] = vert + CHUNK_SIZE + 2;
-
-                    triangles[current + 5] = vert;
-                    triangles[current + 3] = vert + CHUNK_SIZE + 2;
-                    triangles[current + 4] = vert + 1;
-
-                    vert++;
-                    current += 6;
-                }
-                vert++;
-            }
-
-            Vector3 chunkPos = new Vector3((chunkIdx % X_CHUNCK_COUNT) * CHUNK_SIZE * VERTEX_DISTANCE, 0, (chunkIdx / X_CHUNCK_COUNT) * CHUNK_SIZE * VERTEX_DISTANCE);
-
-            GameObject newChunk = Instantiate(chunkPrefab, chunkPos, Quaternion.identity);
-
-            Chunk chunkData = newChunk.GetComponent<Chunk>();
-            chunkData.Biome = BiomeGeneration.GetBiome(new Vector2Int(chunkIdx % X_CHUNCK_COUNT, (int)chunkIdx / X_CHUNCK_COUNT));
-
-            newChunk.GetComponent<Renderer>().material = chunkData.Biome.DebugMaterial;
-
-            newChunk.transform.parent = transform;
-            newChunk.name = "Chunk " + chunkIdx;
             newChunk.layer = LayerMask.NameToLayer("Terrain");
+            newChunk.transform.parent = transform;
 
-
-            //Erstelllung des Meshs
-            Mesh mesh = newChunk.GetComponent<MeshFilter>().mesh;
-            mesh.Clear();
-            mesh.vertices = verticies;
-            mesh.triangles = triangles;
-            mesh.RecalculateBounds();
-
-            TreesGen(chunkPos, verticies, chunkData.Biome);
-
-            MeshCollider meshCollider = newChunk.GetComponent<MeshCollider>();
-            meshCollider.sharedMesh = mesh;
+            SetUpChunk(newChunk, chunkPos);
 
             Chunks[chunkIdx] = newChunk;
         }
     }
 
-    private void TreesGen(Vector3 chunkPos, Vector3[] verticies, BiomeSO biome)
-    {
-        int count = Random.Range(1, MAX_TREE_COUNT_PER_CHUNK);
-        GameObject trees = GameObject.Find("Trees");
-        int treeNumber = 0;
+    public void Update() {
 
-        //Debug.Log(biome.name);
+        if (Player.position.z > (terrainOffsetZ + (Z_CHUNCK_COUNT * 0.5f)) * CHUNK_SIZE) {
 
-        if (biome.name == "Biome_Forest")
-        {
-            treeNumber = 1;
+            BiomeGeneration.ExpandBiomeMap();
+
+            terrainOffsetZ += NEW_AREA_LENGTH;
+
+            for (int z = 0; z < NEW_AREA_LENGTH; z++) {
+
+                for (int x = 0; x < X_CHUNCK_COUNT; x++) {
+
+                    Vector2Int chunkPos = new(x, terrainOffsetZ + Z_CHUNCK_COUNT - NEW_AREA_LENGTH + z);
+
+                    int chunkIdx = (z * X_CHUNCK_COUNT + x + chunkArrayStartIndex) % CHUNK_COUNT;
+
+                    GameObject currentChunk = Chunks[chunkIdx];
+
+                    currentChunk.transform.position = new Vector3(currentChunk.transform.position.x, currentChunk.transform.position.y, chunkPos.y * CHUNK_SIZE);
+
+                    SetUpChunk(currentChunk, chunkPos);
+
+                }
+            }
+
+            chunkArrayStartIndex = (chunkArrayStartIndex + NEW_AREA_LENGTH * X_CHUNCK_COUNT) % Chunks.GetLength(0);
         }
-        else if (biome.name == "Biome_Frozen_Lake")
-        {
-            treeNumber = 2;
-        }
-        else if (biome.name == "Biome_Slope")
-        {
-            treeNumber = 3;
-        }
-        else if (biome.name == "Biome_Village")
-        {
-            treeNumber = 4;
-        }
-        else
-        {
-            treeNumber = 0;
-        }
 
-        //treeNumber = 0;
-        //Debug.Log(treeNumber);
-        for (int i = 0; i < count; i++)
-        {
-            //int index = Random.Range(0, TreeGeneration.GetTreeCount());
-            int pos = Random.Range(0, verticies.Length);
-            GameObject tree = t.GetTree2(treeNumber);
+        int chunkIndex = GetChunkIndexFromWorldPosition(Player.transform.position);
 
-            Vector3 treePosition4 = new Vector3(chunkPos.x + verticies[pos].x, chunkPos.y + verticies[pos].y + 0.8f, chunkPos.z + verticies[pos].z);
-
-            tree.transform.position = treePosition4;
-            GameObject newTree = Instantiate(tree);
-
-            newTree.transform.SetParent(trees.transform);
-            newTree.name = "Tree " + treeIdx;
-            newTree.layer = LayerMask.NameToLayer("Obstacles");
-            treeIdx++;
+        if (chunkIndex != currentPlayerChunkIdx) {
+            UpdateTerrainMeshCollider();
         }
     }
+
+    //Gibt den Chunk an dem ï¿½bergebenen Index zurï¿½ck
+    //Funktioniert auch fï¿½r Index, die grï¿½ï¿½er sind als das Array (fï¿½r die fortlaufende Welt kï¿½nnen also auch fortlaufende Indexe benutzt werden)
+    private GameObject GetChunk(int index) {
+
+        return Chunks[(index + Chunks.GetLength(0)) % Chunks.GetLength(0)];
+    }
+
+    //Aktualisiert das Mesh eines Chunk anhand der Noisefunction mit der neunen Chunkposition
+    private void UpdateMesh(GameObject chunk, Vector2Int pos) {
+
+        //Positionen der Mesh-Knotenpunkte
+        Vector3[] verticies = new Vector3[(CHUNK_SIZE + 1) * (CHUNK_SIZE + 1)];
+
+        for (int i = 0, z = 0; z <= CHUNK_SIZE; z++) {
+            for (int x = 0; x <= CHUNK_SIZE; x++) {
+
+                int xGlobal = pos.x * CHUNK_SIZE + x;
+                int zGlobal = pos.y * CHUNK_SIZE + z;
+
+                verticies[i] = new Vector3(x, noiseFunction.Noise(xGlobal, zGlobal), z);
+                i++;
+            }
+        }
+
+        Mesh mesh = chunk.GetComponent<MeshFilter>().mesh;
+        mesh.Clear();
+        mesh.vertices = verticies;
+        mesh.triangles = TRIANGLES_MESH;
+        mesh.RecalculateBounds();
+    }
+
+    //Aktualisiert den Collider unterhalb des Spieler anhand der Spielerposition
+    private void UpdateTerrainMeshCollider() {
+
+        int oneSideSize = COLLIDER_CHUNK_SIZE / 2;
+
+        int playerChunkIdx = GetChunkIndexFromWorldPosition(Player.position);
+
+        if ((playerChunkIdx % X_CHUNCK_COUNT) + oneSideSize >= X_CHUNCK_COUNT) {
+            playerChunkIdx -= (playerChunkIdx + oneSideSize + 1) % X_CHUNCK_COUNT;
+        }
+        else if ((playerChunkIdx % X_CHUNCK_COUNT) - oneSideSize < 0) {
+            playerChunkIdx += X_CHUNCK_COUNT - ((playerChunkIdx - oneSideSize) % X_CHUNCK_COUNT);
+        }
+
+        Mesh[,] meshs = SelectColliderMeshes(playerChunkIdx);
+
+        Mesh mesh = CombineColliderMeshes(meshs);
+        Collider.GetComponent<MeshCollider>().sharedMesh = mesh;
+        Collider.transform.position = GetChunk(playerChunkIdx - oneSideSize - (oneSideSize * X_CHUNCK_COUNT)).transform.position;
+
+    }
+
+    private Mesh[,] SelectColliderMeshes(int playerChunkIdx) {
+
+        int oneSideSize = COLLIDER_CHUNK_SIZE / 2;
+
+        Mesh[,] meshSelection = new Mesh[COLLIDER_CHUNK_SIZE, COLLIDER_CHUNK_SIZE];
+
+        for (int y = 0; y < COLLIDER_CHUNK_SIZE; y++) {
+            for (int x = 0; x < COLLIDER_CHUNK_SIZE; x++) {
+                meshSelection[y, x] = GetChunk(playerChunkIdx - oneSideSize + x - (oneSideSize * X_CHUNCK_COUNT) + (y * X_CHUNCK_COUNT)).GetComponent<MeshFilter>().mesh;
+            }
+        }
+
+        return meshSelection;
+
+    }
+
+    //gleichgroï¿½e quadrateische meshs
+    private Mesh CombineColliderMeshes(Mesh[,] meshs) {
+
+        int meshSize = (int)Mathf.Sqrt(meshs[0, 0].vertexCount);
+        int vertexCountX = meshSize * meshs.GetLength(0) - meshs.GetLength(0) + 1;
+        int vertexCountZ = meshSize * meshs.GetLength(1) - meshs.GetLength(0) + 1;
+
+        Vector3[] verticies = new Vector3[vertexCountX * vertexCountZ];
+
+        for (int z = 0; z < meshs.GetLength(0); z++) {
+            for (int x = 0; x < meshs.GetLength(1); x++) {
+
+                Mesh currentMesh = meshs[z, x];
+
+                for (int i = 0; i < currentMesh.vertices.Length; i++) {
+                    verticies[i % meshSize + (i / meshSize) * vertexCountX + x * (meshSize - 1) + z * vertexCountX * (meshSize - 1)] = currentMesh.vertices[i] + new Vector3(x * (meshSize - 1), 0, z * (meshSize - 1));
+                }
+
+            }
+        }
+
+        Mesh mesh = new();
+        mesh.vertices = verticies;
+        mesh.triangles = TRIANGLES_COLLIDER;
+        mesh.RecalculateBounds();
+
+        return mesh;
+
+    }
+
+    private void SetUpChunk(GameObject chunk, Vector2Int pos) {
+
+        Chunk chunkData = chunk.GetComponent<Chunk>();
+        chunkData.Biome = BiomeGeneration.GetBiome(new Vector2Int(pos.x, pos.y - terrainOffsetZ));
+
+        chunk.GetComponent<Renderer>().material = chunkData.Biome.DebugMaterial;
+        chunk.name = "Chunk r" + pos.y + " p" + pos.x;
+
+        UpdateMesh(chunk, pos);
+    }
+
+    private int GetChunkIndexFromWorldPosition(Vector3 worldPos) {
+
+        Vector2Int pos = new((int)worldPos.x / CHUNK_SIZE, (int)worldPos.z / CHUNK_SIZE);
+
+        return (pos.y % Z_CHUNCK_COUNT) * X_CHUNCK_COUNT + pos.x;
+
+    }
+
+    private int[] CreateMeshTriangleArray(int chunkCount) {
+
+        int vertexCountPerSide = chunkCount * CHUNK_SIZE;
+
+        //Berechnung der Dreiecke vom Mesh
+        int[] triangles = new int[vertexCountPerSide * vertexCountPerSide * 6];
+
+        int vert = 0;
+        int current = 0;
+
+        //Berechnung der Punkte der Dreicke (6 Punkte: 3 Punkte pro Dreieck, 2 Dreiecke pro Kachel)
+        for (int z = 0; z < vertexCountPerSide; z++) {
+            for (int x = 0; x < vertexCountPerSide; x++) {
+
+                triangles[current] = vert;
+                triangles[current + 1] = vert + vertexCountPerSide + 1;
+                triangles[current + 2] = vert + vertexCountPerSide + 2;
+
+                triangles[current + 5] = vert;
+                triangles[current + 3] = vert + vertexCountPerSide + 2;
+                triangles[current + 4] = vert + 1;
+
+                vert++;
+                current += 6;
+            }
+            vert++;
+        }
+        return triangles;
+    }
+
 }

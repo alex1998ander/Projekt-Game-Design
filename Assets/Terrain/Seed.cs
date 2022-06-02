@@ -17,7 +17,7 @@ public class Seed {
         this.seed = seed;
         seedHashcode = seed.GetHashCode();
 
-        Random.InitState(seedHashcode);
+        //Random.InitState(seedHashcode);
 
         Fst = Random.Range(0, 10000);
         Snd = Random.Range(0, 10000);

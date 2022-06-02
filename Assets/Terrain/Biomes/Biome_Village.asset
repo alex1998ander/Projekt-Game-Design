@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Biome_Village
   m_EditorClassIdentifier: 
   Name: Village
+  Weight: 1
   DebugMaterial: {fileID: 2100000, guid: 4ecdf1feceb8baa4799084085f11ed3e, type: 2}
