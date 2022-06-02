@@ -21,7 +21,7 @@ public class TerrainGenerator : MonoBehaviour
     private static int[] TRIANGLES_MESH;
     private static int[] TRIANGLES_COLLIDER;
 
-    //Collidergr��e unterhalb des Spielers (MUSS UNGERADE sein, damit der Spieler in der Mitte bleibt)
+    //Collidergroesse unterhalb des Spielers (MUSS UNGERADE sein, damit der Spieler in der Mitte bleibt)
     private const int COLLIDER_CHUNK_SIZE = 5;
     #endregion
 
@@ -30,7 +30,7 @@ public class TerrainGenerator : MonoBehaviour
     private GameObject[] Chunks { get; set; }
     //Spielerposition
     public Transform Player;
-    //Collider f�r den Untergrund in der Umgebung des Spielers
+    //Collider fuer den Untergrund in der Umgebung des Spielers
     public GameObject Collider;
 
     //World-Koordinate des Terrainanfangs
@@ -61,7 +61,7 @@ public class TerrainGenerator : MonoBehaviour
 
         CHUNK_COUNT = X_CHUNCK_COUNT * Z_CHUNCK_COUNT;
 
-        //+4 durchs 3-fache Smoothing (+6 -2 f�r generellen Offset von 2)
+        //+4 durchs 3-fache Smoothing (+6 -2 fuer generellen Offset von 2)
         NEW_AREA_LENGTH = X_CHUNCK_COUNT - (X_CHUNCK_COUNT / 3) + 4;
 
         TRIANGLES_MESH = CreateMeshTriangleArray(1);
@@ -70,7 +70,7 @@ public class TerrainGenerator : MonoBehaviour
 
         Chunks = new GameObject[CHUNK_COUNT];
 
-        //F�r jeden Chunk
+        //Fuer jeden Chunk
         for (int chunkIdx = 0; chunkIdx < Chunks.Length; chunkIdx++)
         {
 
@@ -123,8 +123,8 @@ public class TerrainGenerator : MonoBehaviour
         }
     }
 
-    //Gibt den Chunk an dem �bergebenen Index zur�ck
-    //Funktioniert auch f�r Index, die gr��er sind als das Array (f�r die fortlaufende Welt k�nnen also auch fortlaufende Indexe benutzt werden)
+    //Gibt den Chunk an dem uebergebenen Index zurck
+    //Funktioniert auch fuer Index, die groesser sind als das Array (fuer die fortlaufende Welt koennen also auch fortlaufende Indexe benutzt werden)
     private GameObject GetChunk(int index) {
 
         return Chunks[(index + Chunks.GetLength(0)) % Chunks.GetLength(0)];
@@ -192,7 +192,7 @@ public class TerrainGenerator : MonoBehaviour
 
     }
 
-    //gleichgro�e quadrateische meshs
+    //gleichgrosse quadrateische meshs
     private Mesh CombineColliderMeshes(Mesh[,] meshs) {
 
         int meshSize = (int)Mathf.Sqrt(meshs[0, 0].vertexCount);
