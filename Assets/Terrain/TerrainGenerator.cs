@@ -71,11 +71,6 @@ public class TerrainGenerator : MonoBehaviour
         Chunks = new GameObject[CHUNK_COUNT];
 
         //F�r jeden Chunk
-=======
-        Chunks = new GameObject[CHUNK_COUNT];
-
-        //Fuer jeden Chunk
->>>>>>> Stashed changes
         for (int chunkIdx = 0; chunkIdx < Chunks.Length; chunkIdx++)
         {
 
