@@ -10,13 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 3663568466857018367}
   - component: {fileID: -1143747327383446239}
+  - component: {fileID: 8013345678017024113}
   - component: {fileID: 2595341037641300657}
   - component: {fileID: 5241188492295548374}
   - component: {fileID: 7321050765052163995}
   - component: {fileID: 9192926787211592707}
   - component: {fileID: 1812534387682742636}
   m_Layer: 7
-  m_Name: PlayerCC
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58,6 +59,18 @@ MonoBehaviour:
   probeDistance: 100
   jumpHeight: 2
   maxAirJumps: 2
+--- !u!114 &8013345678017024113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3663568466857018366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af2c07acf49ab7b41bd5fe604c20b944, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &2595341037641300657
 Rigidbody:
   m_ObjectHideFlags: 0

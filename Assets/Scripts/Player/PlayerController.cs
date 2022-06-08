@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 /// <summary>
 /// Kontrolliert die Bewegung des Spielers
 /// </summary>
-public class ThirdPersonMovementCC : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     // Transform der Kamera
     [SerializeField] private Transform cam;
@@ -18,7 +18,7 @@ public class ThirdPersonMovementCC : MonoBehaviour
     [SerializeField, Range(0f, 100f)] private float maxSpeed = 10f;
 
     // Maximale Beschleunigung (Auf Boden & in Luft)
-    [SerializeField, Range(0f, 100f)] private float maxAcceleration = 10f, maxAirAcceleration = 1f;
+    [SerializeField, Range(0f, 100f)] private float maxAcceleration = 10f, maxAirAcceleration = 5f;
 
     // Maximaler Winkel einer Oberfläche, um als "Boden" zu zählen
     [SerializeField, Range(0f, 90f)] private float maxGroundAngle = 70f;
@@ -346,5 +346,27 @@ public class ThirdPersonMovementCC : MonoBehaviour
     private void OnValidate()
     {
         _minGroundDotProduct = Mathf.Cos(maxGroundAngle * Mathf.Deg2Rad);
+    }
+
+    public float MaxSpeed
+    {
+        get => maxSpeed;
+        set => maxSpeed = value;
+    }
+
+    public float MaxAcceleration
+    {
+        get => maxAcceleration;
+        set
+        {
+            maxAcceleration = value;
+            maxAirAcceleration = maxAcceleration / 2.0f;
+        }
+    }
+
+    public int JumpPhase
+    {
+        get => _jumpPhase;
+        set => _jumpPhase = value;
     }
 }
