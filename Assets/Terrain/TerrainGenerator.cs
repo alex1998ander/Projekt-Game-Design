@@ -14,7 +14,9 @@ public class TerrainGenerator : MonoBehaviour
     //Chunkanzahl gesamt
     private static int CHUNK_COUNT;
 
-    //Y-Gr��e jeder neu generierten Terrainerweiterung
+    private const int TERRAIN_SCALE = 10;
+
+    //Y-Groesse jeder neu generierten Terrainerweiterung
     private static int NEW_AREA_LENGTH;
 
     //Dreiecksanordnung der Verticies eines Meshes
@@ -75,7 +77,7 @@ public class TerrainGenerator : MonoBehaviour
         {
 
             Vector2Int chunkPos = new(chunkIdx % X_CHUNCK_COUNT, chunkIdx / X_CHUNCK_COUNT);
-            Vector3 chunkPosWorld = new(chunkPos.x * CHUNK_SIZE, 0, chunkPos.y * CHUNK_SIZE);
+            Vector3 chunkPosWorld = new(chunkPos.x * CHUNK_SIZE * TERRAIN_SCALE, 0, chunkPos.y * CHUNK_SIZE * TERRAIN_SCALE);
 
             GameObject newChunk = Instantiate(chunkPrefab, chunkPosWorld, Quaternion.identity);
 
@@ -90,7 +92,7 @@ public class TerrainGenerator : MonoBehaviour
 
     public void Update() {
 
-        if (Player.position.z > (terrainOffsetZ + (Z_CHUNCK_COUNT * 0.5f)) * CHUNK_SIZE) {
+        if (Player.position.z > (terrainOffsetZ + (Z_CHUNCK_COUNT * 0.5f)) * CHUNK_SIZE * TERRAIN_SCALE) {
 
             BiomeGeneration.ExpandBiomeMap();
 
@@ -106,7 +108,7 @@ public class TerrainGenerator : MonoBehaviour
 
                     GameObject currentChunk = Chunks[chunkIdx];
 
-                    currentChunk.transform.position = new Vector3(currentChunk.transform.position.x, currentChunk.transform.position.y, chunkPos.y * CHUNK_SIZE);
+                    currentChunk.transform.position = new Vector3(currentChunk.transform.position.x, currentChunk.transform.position.y, chunkPos.y * CHUNK_SIZE * TERRAIN_SCALE);
 
                     SetUpChunk(currentChunk, chunkPos);
 
@@ -142,7 +144,7 @@ public class TerrainGenerator : MonoBehaviour
                 int xGlobal = pos.x * CHUNK_SIZE + x;
                 int zGlobal = pos.y * CHUNK_SIZE + z;
 
-                verticies[i] = new Vector3(x, noiseFunction.Noise(xGlobal, zGlobal), z);
+                verticies[i] = new Vector3(x * TERRAIN_SCALE, noiseFunction.Noise(xGlobal, zGlobal, chunk.GetComponent<Chunk>().GetBiome()) * TERRAIN_SCALE, z * TERRAIN_SCALE);
                 i++;
             }
         }
@@ -207,7 +209,7 @@ public class TerrainGenerator : MonoBehaviour
                 Mesh currentMesh = meshs[z, x];
 
                 for (int i = 0; i < currentMesh.vertices.Length; i++) {
-                    verticies[i % meshSize + (i / meshSize) * vertexCountX + x * (meshSize - 1) + z * vertexCountX * (meshSize - 1)] = currentMesh.vertices[i] + new Vector3(x * (meshSize - 1), 0, z * (meshSize - 1));
+                    verticies[i % meshSize + (i / meshSize) * vertexCountX + x * (meshSize - 1) + z * vertexCountX * (meshSize - 1)] = currentMesh.vertices[i] + new Vector3(x * (meshSize - 1) * TERRAIN_SCALE, 0, z * (meshSize - 1) * TERRAIN_SCALE);
                 }
 
             }
@@ -235,7 +237,7 @@ public class TerrainGenerator : MonoBehaviour
 
     private int GetChunkIndexFromWorldPosition(Vector3 worldPos) {
 
-        Vector2Int pos = new((int)worldPos.x / CHUNK_SIZE, (int)worldPos.z / CHUNK_SIZE);
+        Vector2Int pos = new((int)worldPos.x / (CHUNK_SIZE * TERRAIN_SCALE), (int)worldPos.z / (CHUNK_SIZE * TERRAIN_SCALE));
 
         return (pos.y % Z_CHUNCK_COUNT) * X_CHUNCK_COUNT + pos.x;
 

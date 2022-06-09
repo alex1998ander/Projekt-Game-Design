@@ -271,7 +271,6 @@ MonoBehaviour:
   Player: {fileID: 1213009030}
   Collider: {fileID: 1223752426}
   chunkPrefab: {fileID: 1230861678402292941, guid: 811f3a8da15005f41a6af0dea319124e, type: 3}
-  seedStr: seed
 --- !u!4 &49100514
 Transform:
   m_ObjectHideFlags: 0
@@ -300,12 +299,24 @@ PrefabInstance:
       objectReference: {fileID: 1245286004}
     - target: {fileID: -1143747327383446239, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
       propertyPath: maxSpeed
-      value: 65.1
+      value: 95
+      objectReference: {fileID: 0}
+    - target: {fileID: -1143747327383446239, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
+      propertyPath: maxSnapSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: -1143747327383446239, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
+      propertyPath: maxGroundAngle
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: -1143747327383446239, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
       propertyPath: maxAcceleration
-      value: 64.3
+      value: 65
       objectReference: {fileID: 0}
+    - target: {fileID: 3663568466857018366, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 8418204508859773708, guid: 0000000000000000d000000000000000, type: 0}
     - target: {fileID: 3663568466857018366, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
       propertyPath: m_Name
       value: PlayerCC
@@ -316,15 +327,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3663568466857018367, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 92.79
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 3663568466857018367, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 34.9
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 3663568466857018367, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 50.1
+      value: 268
       objectReference: {fileID: 0}
     - target: {fileID: 3663568466857018367, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
       propertyPath: m_LocalRotation.w
@@ -363,6 +374,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5736433105315243289, guid: 2ec41d09640471a468fbe1331c865f64, type: 3}
+      propertyPath: far clip plane
+      value: 3600
+      objectReference: {fileID: 0}
+    - target: {fileID: 5736433105315243291, guid: 2ec41d09640471a468fbe1331c865f64, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
     - target: {fileID: 5736433105315243291, guid: 2ec41d09640471a468fbe1331c865f64, type: 3}
       propertyPath: m_Name
       value: OrbitCamera
@@ -417,7 +436,7 @@ PrefabInstance:
       objectReference: {fileID: 1213009030}
     - target: {fileID: 5736433105315243295, guid: 2ec41d09640471a468fbe1331c865f64, type: 3}
       propertyPath: distance
-      value: 20
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ec41d09640471a468fbe1331c865f64, type: 3}

@@ -13,5 +13,47 @@ MonoBehaviour:
   m_Name: Biome_Slope
   m_EditorClassIdentifier: 
   Name: Slope
-  Weight: 20
-  DebugMaterial: {fileID: 2100000, guid: dd29659d0f894e74c944c63c9f84ab05, type: 2}
+  Weight: 40
+  spline:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.71407765
+      outSlope: 0.71407765
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.46579766
+      value: 0.3326157
+      inSlope: 0.9097981
+      outSlope: 0.9097981
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.5225552
+      value: 0.6249509
+      inSlope: 1.1523211
+      outSlope: 1.1523211
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.1505094
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.78553396
+      outSlope: 0.78553396
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  DebugMaterial: {fileID: 15303, guid: 0000000000000000f000000000000000, type: 0}
