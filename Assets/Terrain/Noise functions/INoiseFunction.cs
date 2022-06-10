@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface INoiseFunction {
 
-    public float Noise(int x, int z, BiomeSO biome); 
+    public float Noise(int x, int z); 
 
 }

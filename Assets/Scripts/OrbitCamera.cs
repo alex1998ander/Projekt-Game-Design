@@ -13,7 +13,7 @@ public class OrbitCamera : MonoBehaviour
     [SerializeField] private Transform focus = default;
 
     // Distanz der Kamera vom Objekt
-    [SerializeField, Range(1f, 20f)] private float distance = 15f;
+    [SerializeField, Range(1f, 50f)] private float distance = 15f;
 
     // Radius um Fokuspunkt, um weiche Kamerabewegung zu erlauben
     [SerializeField, Min(0f)] private float focusRadius = 1f;
