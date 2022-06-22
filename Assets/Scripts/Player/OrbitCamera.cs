@@ -28,7 +28,9 @@ public class OrbitCamera : MonoBehaviour
 
     // Minimaler und maximaler vertikaler Winkel (Damit man nicht die Kamera über Kopf drehen kann)
     [SerializeField, Range(-89f, 89f)] private float minVerticalAngle = -30f, maxVerticalAngle = 60f;
-    // TODO: Eventuell das gleiche für horizontale Winkel einführen, je nachdem wie das Spiel aussehen wird
+
+    // Winkelraum, den die Kamera zur horizontalen Drehung zur Verfügung hat
+    [SerializeField, Range(0f, 180f)] private float horizontalAngleRange = 45f;
 
     // Delay in Sekunden, wann die automatische horizontale Winkelanpassung der Kamera starten soll
     [SerializeField, Min(0f)] private float alignDelay = 5f;
@@ -224,15 +226,17 @@ public class OrbitCamera : MonoBehaviour
     /// </summary>
     private void ConstraintAngles()
     {
+        Debug.Log("angle: " + _orbitAngles.y);
         _orbitAngles.x = Mathf.Clamp(_orbitAngles.x, minVerticalAngle, maxVerticalAngle);
-        if (_orbitAngles.y < 0f)
-        {
-            _orbitAngles.y += 360f;
-        }
-        else if (_orbitAngles.y >= 360f)
-        {
-            _orbitAngles.y -= 360f;
-        }
+        _orbitAngles.y = Mathf.Clamp(_orbitAngles.y, -horizontalAngleRange / 2f, horizontalAngleRange / 2f);
+        // if (_orbitAngles.y < 0f)
+        // {
+        //     _orbitAngles.y += 360f;
+        // }
+        // else if (_orbitAngles.y >= 360f)
+        // {
+        //     _orbitAngles.y -= 360f;
+        // }
     }
 
     /// <summary>
