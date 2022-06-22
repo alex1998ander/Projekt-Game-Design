@@ -226,17 +226,8 @@ public class OrbitCamera : MonoBehaviour
     /// </summary>
     private void ConstraintAngles()
     {
-        Debug.Log("angle: " + _orbitAngles.y);
         _orbitAngles.x = Mathf.Clamp(_orbitAngles.x, minVerticalAngle, maxVerticalAngle);
         _orbitAngles.y = Mathf.Clamp(_orbitAngles.y, -horizontalAngleRange / 2f, horizontalAngleRange / 2f);
-        // if (_orbitAngles.y < 0f)
-        // {
-        //     _orbitAngles.y += 360f;
-        // }
-        // else if (_orbitAngles.y >= 360f)
-        // {
-        //     _orbitAngles.y -= 360f;
-        // }
     }
 
     /// <summary>
