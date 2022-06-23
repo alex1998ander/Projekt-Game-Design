@@ -14,14 +14,14 @@ public class TerrainHandler : MonoBehaviour
     //Chunkanzahl gesamt
     private static int CHUNK_COUNT;
     //Terrainskalierung
-    private const int TERRAIN_SCALE = 1;
+    private const int TERRAIN_SCALE = 10;
 
-    //Dreiecksanordnung der Verticies eines Meshes
+    //Dreiecksanordnung der vertices eines Meshes
     private static int[] TRIANGLES_MESH;
     private static int[] TRIANGLES_COLLIDER;
 
     //Collidergroesse unterhalb des Spielers (MUSS UNGERADE sein, damit der Spieler in der Mitte bleibt)
-    private const int COLLIDER_CHUNK_SIZE = 5;
+    private const int COLLIDER_CHUNK_SIZE = 3;
     #endregion
 
     #region Variablen
@@ -43,18 +43,11 @@ public class TerrainHandler : MonoBehaviour
 
     //ChunkPrefab
     [SerializeField] private GameObject chunkPrefab;
-    //Noise-Funktion
-    [SerializeField] private INoiseFunction noiseFunction = new SkiSlopeNoise();
     #endregion
 
     public void Start()
     {
         Instance = this;
-
-        //BiomeGeneration.Init();
-
-        //X_CHUNCK_COUNT = BiomeGeneration.GetWorldWidth();
-        //Z_CHUNCK_COUNT = BiomeGeneration.GetWorldLength();
 
         CHUNK_COUNT = X_CHUNCK_COUNT * Z_CHUNCK_COUNT;
 
@@ -78,9 +71,16 @@ public class TerrainHandler : MonoBehaviour
         int debug_x = (int)Player.transform.position.x / TERRAIN_SCALE;
         int debug_z = (int)Player.transform.position.z / TERRAIN_SCALE;
 
-        Debug.Log("Fluctuation: " + NoiseHandler.Instance.FluctuationNoise(debug_x, debug_z)
-            + "\nErosion: " + NoiseHandler.Instance.ErosionNoise(debug_x, debug_z)
-            + "\nGradient: " + NoiseHandler.Instance.GradientNoise(debug_x, debug_z));
+        float fluctuation = NoiseHandler.FluctuationNoise(debug_x, debug_z);
+        float erosion = NoiseHandler.ErosionNoise(debug_x, debug_z);
+        float gradient = NoiseHandler.GradientNoise(debug_x, debug_z);
+        float gradient_slope = NoiseHandler.Instance.Debug_GetGradientSlopeZ(debug_x, debug_z);
+
+        Debug.Log("Fluctuation: " + fluctuation
+            + "\nErosion: " + erosion
+            + "\n=> " + (fluctuation * erosion)
+            + "\nGradient: " + gradient
+            + "\nSteigung: " + gradient_slope);
 
         int chunkIndex = GetChunkIndexFromWorldPosition(Player.transform.position);
 
@@ -113,9 +113,6 @@ public class TerrainHandler : MonoBehaviour
 
     private void ExpandWorld()
     {
-
-        //BiomeGeneration.ExpandBiomeMap();
-
         for (int x = 0; x < X_CHUNCK_COUNT; x++)
         {
 
@@ -132,7 +129,6 @@ public class TerrainHandler : MonoBehaviour
         }
 
         terrainOffsetZ++;
-
     }
 
     //Gibt den Chunk an dem uebergebenen Index zurueck
@@ -141,33 +137,6 @@ public class TerrainHandler : MonoBehaviour
     {
 
         return Chunks[(index + Chunks.GetLength(0)) % Chunks.GetLength(0)];
-    }
-
-    //Aktualisiert das Mesh eines Chunk anhand der Noisefunction mit der neunen Chunkposition
-    private void UpdateMesh(GameObject chunk, Vector2Int pos)
-    {
-
-        //Positionen der Mesh-Knotenpunkte
-        Vector3[] verticies = new Vector3[(CHUNK_SIZE + 1) * (CHUNK_SIZE + 1)];
-
-        for (int i = 0, z = 0; z <= CHUNK_SIZE; z++)
-        {
-            for (int x = 0; x <= CHUNK_SIZE; x++)
-            {
-
-                int xGlobal = pos.x * CHUNK_SIZE + x;
-                int zGlobal = pos.y * CHUNK_SIZE + z;
-
-                verticies[i] = new Vector3(x * TERRAIN_SCALE, noiseFunction.Noise(xGlobal, zGlobal) * TERRAIN_SCALE, z * TERRAIN_SCALE);
-                i++;
-            }
-        }
-
-        Mesh mesh = chunk.GetComponent<MeshFilter>().mesh;
-        mesh.Clear();
-        mesh.vertices = verticies;
-        mesh.triangles = TRIANGLES_MESH;
-        mesh.RecalculateBounds();
     }
 
     #region Collider
@@ -223,7 +192,7 @@ public class TerrainHandler : MonoBehaviour
         int vertexCountX = meshSize * meshs.GetLength(0) - meshs.GetLength(0) + 1;
         int vertexCountZ = meshSize * meshs.GetLength(1) - meshs.GetLength(0) + 1;
 
-        Vector3[] verticies = new Vector3[vertexCountX * vertexCountZ];
+        Vector3[] vertices = new Vector3[vertexCountX * vertexCountZ];
 
         for (int z = 0; z < meshs.GetLength(0); z++)
         {
@@ -234,14 +203,14 @@ public class TerrainHandler : MonoBehaviour
 
                 for (int i = 0; i < currentMesh.vertices.Length; i++)
                 {
-                    verticies[i % meshSize + (i / meshSize) * vertexCountX + x * (meshSize - 1) + z * vertexCountX * (meshSize - 1)] = currentMesh.vertices[i] + new Vector3(x * (meshSize - 1) * TERRAIN_SCALE, 0, z * (meshSize - 1) * TERRAIN_SCALE);
+                    vertices[i % meshSize + (i / meshSize) * vertexCountX + x * (meshSize - 1) + z * vertexCountX * (meshSize - 1)] = currentMesh.vertices[i] + new Vector3(x * (meshSize - 1) * TERRAIN_SCALE, 0, z * (meshSize - 1) * TERRAIN_SCALE);
                 }
 
             }
         }
 
         Mesh mesh = new();
-        mesh.vertices = verticies;
+        mesh.vertices = vertices;
         mesh.triangles = TRIANGLES_COLLIDER;
         mesh.RecalculateBounds();
 
@@ -260,7 +229,26 @@ public class TerrainHandler : MonoBehaviour
         //chunk.GetComponent<Renderer>().material = chunkData.Biome.DebugMaterial;
         chunk.name = "Chunk r" + pos.y + " p" + pos.x;
 
-        UpdateMesh(chunk, pos);
+        //Aktualisiert das Mesh eines Chunk anhand der Noisefunction mit der neunen Chunkposition
+        //Positionen der Mesh-Knotenpunkte
+        Vector3[] vertices = new Vector3[(CHUNK_SIZE + 1) * (CHUNK_SIZE + 1)];
+
+        for (int i = 0, z = 0; z <= CHUNK_SIZE; z++) {
+            for (int x = 0; x <= CHUNK_SIZE; x++) {
+
+                int xGlobal = pos.x * CHUNK_SIZE + x;
+                int zGlobal = pos.y * CHUNK_SIZE + z;
+
+                vertices[i] = new Vector3(x * TERRAIN_SCALE, NoiseHandler.Instance.Noise(xGlobal, zGlobal) * TERRAIN_SCALE, z * TERRAIN_SCALE);
+                i++;
+            }
+        }
+
+        Mesh mesh = chunk.GetComponent<MeshFilter>().mesh;
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.triangles = TRIANGLES_MESH;
+        mesh.RecalculateBounds();
     }
 
     private int GetChunkIndexFromWorldPosition(Vector3 worldPos)

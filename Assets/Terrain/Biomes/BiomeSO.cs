@@ -11,33 +11,7 @@ public class BiomeSO : ScriptableObject {
 
     public string Name;
 
-    public int Weight;
-
-    [SerializeField] private AnimationCurve spline = AnimationCurve.Linear(0, 1, 1, 1);
+    [Range(0, 100)] public int Weight;
 
     public Material DebugMaterial;
-
-    public float GetSplinePoint(float x) {
-        return spline.Evaluate(x);
-    }
-
-    //    #region Editor
-    //#if UNITY_EDITOR
-
-    //    [CustomEditor(typeof(BiomeSO))]
-    //    public class BiomeSOEditorGUI : Editor {
-
-    //        public override void OnInspectorGUI() {
-    //            base.OnInspectorGUI();
-
-    //            BiomeSO biomeSO = (BiomeSO)target;
-
-    //            biomeSO.curve = EditorGUILayout.CurveField("test", biomeSO.curve);
-
-    //        }
-
-    //    }
-
-    //#endif
-    //    #endregion
 }

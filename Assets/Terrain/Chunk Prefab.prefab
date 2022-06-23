@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7695666778005508249}
   - component: {fileID: 1519063640591739287}
   - component: {fileID: 4018588109576695322}
-  - component: {fileID: 3750904089648294044}
   m_Layer: 0
   m_Name: Chunk Prefab
   m_TagString: Untagged
@@ -98,17 +97,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Biome: {fileID: 0}
---- !u!64 &3750904089648294044
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1230861678402292941}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
