@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2f6faf82eaa42d4e95d59c4891b1880, type: 3}
-  m_Name: Biome_Frozen_Lake
+  m_Name: Biome_Isolated _Trees
   m_EditorClassIdentifier: 
-  Name: Frozen Lake
-  DebugMaterial: {fileID: 2100000, guid: f0623c16d63f617488a5eb3798d08af9, type: 2}
+  Name: Isolated Trees
+  DebugMaterial: {fileID: 2100000, guid: b91c4f03fc25f144083596dcfdc594a2, type: 2}
   Obstacles:
   - {fileID: -8679921383154817045, guid: f59db7c1ac7e6b446babb736f757ff79, type: 3}
   - {fileID: -8679921383154817045, guid: 54a79d4c5ad2aec469c5635c42beb8b3, type: 3}

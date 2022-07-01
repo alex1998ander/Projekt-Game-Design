@@ -135,7 +135,6 @@ GameObject:
   - component: {fileID: 19793139}
   - component: {fileID: 19793138}
   - component: {fileID: 19793137}
-  - component: {fileID: 19793136}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -143,23 +142,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &19793136
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 19793135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea2da64707970a04cbf745ecb020b7d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  biomes:
-  - {fileID: 11400000, guid: 3115d44ab8a88f44ca03a6b5ea651dac, type: 2}
-  - {fileID: 11400000, guid: 8693f2042eef18f48a6997daab3135c7, type: 2}
-  - {fileID: 11400000, guid: afd9f9ea1e829594395fe810c78c11bd, type: 2}
-  - {fileID: 11400000, guid: b3d5897cbe293de41912f4b9bbd4b2a8, type: 2}
 --- !u!64 &19793137
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -194,7 +176,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 15303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -250,6 +232,7 @@ GameObject:
   - component: {fileID: 49100514}
   - component: {fileID: 49100513}
   - component: {fileID: 49100515}
+  - component: {fileID: 49100516}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -271,6 +254,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 1213009030}
   Collider: {fileID: 1223752426}
+  biome_forest: {fileID: 11400000, guid: afd9f9ea1e829594395fe810c78c11bd, type: 2}
+  biome_frozen_lake: {fileID: 11400000, guid: 8693f2042eef18f48a6997daab3135c7, type: 2}
+  biome_isolated_trees: {fileID: 11400000, guid: ffab015bb4471254fb6071e7a9d3ebc7, type: 2}
+  biome_open_space: {fileID: 11400000, guid: 8625dcc32b28b9c49b9356d5561f0790, type: 2}
+  biome_ski_slope: {fileID: 11400000, guid: 3115d44ab8a88f44ca03a6b5ea651dac, type: 2}
+  biome_village: {fileID: 11400000, guid: b3d5897cbe293de41912f4b9bbd4b2a8, type: 2}
   chunkPrefab: {fileID: 1230861678402292941, guid: 811f3a8da15005f41a6af0dea319124e, type: 3}
 --- !u!4 &49100514
 Transform:
@@ -371,6 +360,23 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &49100516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 49100512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eed85666a75f98d448d1f124e62f43c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  presets:
+  - {fileID: 11400000, guid: 730922c2b0bc17e4b80cf6848ad1c32d, type: 2}
+  - {fileID: 11400000, guid: 00f723b3c21191d4c8d19a7912fdb643, type: 2}
+  - {fileID: 11400000, guid: 7e831d8937f2fc04a856bb4762bfef1f, type: 2}
+  - {fileID: 11400000, guid: 4665438c16520c94e9378a43b51cbc69, type: 2}
 --- !u!1001 &59290946
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -397,6 +403,10 @@ PrefabInstance:
     - target: {fileID: -1143747327383446239, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
       propertyPath: maxAcceleration
       value: 79.8
+      objectReference: {fileID: 0}
+    - target: {fileID: -1143747327383446239, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
+      propertyPath: maxAirAcceleration
+      value: 79.7
       objectReference: {fileID: 0}
     - target: {fileID: 3663568466857018366, guid: 12d8a221c0858c248ba2e84f4b99ccc4, type: 3}
       propertyPath: m_Icon

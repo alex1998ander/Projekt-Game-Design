@@ -10,7 +10,8 @@ public class NoiseHandler : MonoBehaviour {
 
     //Singleton
     public static NoiseHandler Instance;
-    private float offset;
+    private float offset = 0.0f;
+    private float descent = 0.15f;
 
     public void Awake() {
         Instance = this;
@@ -21,9 +22,10 @@ public class NoiseHandler : MonoBehaviour {
 
         float noise = 0
             + (fluctuationSpline.Evaluate(FluctuationNoise(x, z)) * erosionSpline.Evaluate(ErosionNoise(x, z)))
-            + (gradientSpline.Evaluate(GradientNoise(x, z)) - z) * 0.25f
-            + (-Mathf.Cos(Mathf.PI * Mathf.Pow((x - 125) / 125.0f, 2.0f)) + 1) * 25
-            - offset;
+            + (gradientSpline.Evaluate(GradientNoise(x, z)) - z) * descent
+            //+ (-Mathf.Cos(Mathf.PI * Mathf.Pow((x - 125) / 125.0f, 2.0f)) + 1) * 25
+            - offset
+            ;
 
         return noise;
     }
@@ -69,7 +71,7 @@ public class NoiseHandler : MonoBehaviour {
         return (value - min) / (max - min);
     }
 
-    public float Debug_GetGradientSlopeZ(int x, int y) {
+    public float GetGradientSlopeZ(int x, int y) {
         return ((gradientSpline.Evaluate(GradientNoise(x, y - 1)) - y + 1) - (gradientSpline.Evaluate(GradientNoise(x, y + 1)) - y - 1)) * 0.5f;
     }
 }

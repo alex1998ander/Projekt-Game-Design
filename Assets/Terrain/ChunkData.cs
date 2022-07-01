@@ -5,9 +5,7 @@ using UnityEngine;
 public class ChunkData : MonoBehaviour {
 
     [SerializeField] public BiomeSO Biome;
+    [SerializeField] public PlacementPresetSO Preset;
 
-    public BiomeSO GetBiome() {
-        return Biome;
-    }
 
 }

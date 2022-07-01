@@ -13,29 +13,24 @@ MonoBehaviour:
   m_Name: Biome_Village
   m_EditorClassIdentifier: 
   Name: Village
-  Weight: 1
-  spline:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  DebugMaterial: {fileID: 15303, guid: 0000000000000000f000000000000000, type: 0}
+  DebugMaterial: {fileID: 2100000, guid: 4ecdf1feceb8baa4799084085f11ed3e, type: 2}
+  Obstacles:
+  - {fileID: -8679921383154817045, guid: f59db7c1ac7e6b446babb736f757ff79, type: 3}
+  - {fileID: -8679921383154817045, guid: 54a79d4c5ad2aec469c5635c42beb8b3, type: 3}
+  - {fileID: -8679921383154817045, guid: 9f1933a7a0bfb0d45ab2f70e69d078d2, type: 3}
+  - {fileID: -8679921383154817045, guid: 5e1f0ef39f3e53345895d6d1489080ce, type: 3}
+  - {fileID: -8679921383154817045, guid: 91ed894ab0c0aec4989357e0a35bf3af, type: 3}
+  - {fileID: -8679921383154817045, guid: 2187b8685fafb334c898d13dc31e0065, type: 3}
+  - {fileID: -8679921383154817045, guid: f067dc9084f002b4e92d9dc0f7fb8c0c, type: 3}
+  - {fileID: -8679921383154817045, guid: 61cd5c52c4644554da1509af46cf891d, type: 3}
+  - {fileID: -8679921383154817045, guid: 633a64f5c5e0f8744a93e27013dffbc0, type: 3}
+  - {fileID: -8679921383154817045, guid: cb44022639d9ebf42880300873135dc6, type: 3}
+  - {fileID: -8679921383154817045, guid: b4e3a30b0840e3e45a06c885071b2f82, type: 3}
+  - {fileID: -8679921383154817045, guid: b74ab2d9afa572b40b4a559ffb375d2f, type: 3}
+  - {fileID: -8679921383154817045, guid: de07bb1fe1553894c8ed74f32fecd45d, type: 3}
+  - {fileID: -8679921383154817045, guid: 57ca16fb79fdff8468a6080a2b3a4a2c, type: 3}
+  - {fileID: -8679921383154817045, guid: df5aac4924254a446846c9292c7d4285, type: 3}
+  - {fileID: -8679921383154817045, guid: 7a5be5b8cf67ae84bbc643d1c03c56af, type: 3}
+  - {fileID: -8679921383154817045, guid: 819e5f2d49d9ede438ea632fba534ea1, type: 3}
+  Weights: 060000000300000006000000140000001e000000320000000300000004000000040000000400000001000000030000000200000001000000070000000700000005000000
+  emptyWeight: 5
