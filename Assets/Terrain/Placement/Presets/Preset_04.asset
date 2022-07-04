@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: Preset_04
   m_EditorClassIdentifier: 
   Pos:
-  - {x: 5, y: 7}
   - {x: 7, y: 5}
   - {x: 3, y: 6}
   - {x: 3, y: 1}
-  - {x: 2, y: 9}
   - {x: 4, y: 3}

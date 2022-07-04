@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Biome_Forest
   m_EditorClassIdentifier: 
   Name: Forest
-  DebugMaterial: {fileID: 2100000, guid: 58128363c8a3e2d4d90cf5acf30067f5, type: 2}
+  DebugMaterial: {fileID: 2100000, guid: dd29659d0f894e74c944c63c9f84ab05, type: 2}
   Obstacles:
   - {fileID: -8679921383154817045, guid: f59db7c1ac7e6b446babb736f757ff79, type: 3}
   - {fileID: -8679921383154817045, guid: 54a79d4c5ad2aec469c5635c42beb8b3, type: 3}

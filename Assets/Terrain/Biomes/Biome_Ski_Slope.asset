@@ -16,5 +16,7 @@ MonoBehaviour:
   DebugMaterial: {fileID: 2100000, guid: dd29659d0f894e74c944c63c9f84ab05, type: 2}
   Obstacles:
   - {fileID: 6437379449870152377, guid: 17d7498c2b814e04cabe9a6583e98d7b, type: 3}
-  Weights: 01000000
+  - {fileID: 6437379449870152377, guid: b9dbff617dcbabd4380adfe32a2984f6, type: 3}
+  - {fileID: 6437379449870152377, guid: 3c2ec04c59353d14b80e7c385c4fb8bc, type: 3}
+  Weights: 010000000100000001000000
   emptyWeight: 5
